@@ -1,0 +1,140 @@
+echo off
+//title is the what you what the top bar of the screen to say
+title root@145.135.4.133   :  21209 skids connected  : Destroy the computer
+cls
+color 4
+//From here to start is finding out What version of windows your on
+systeminfo | find "OS Name" > %TEMP%\osname.txt
+FOR /F "usebackq delims=: tokens=2" %%i IN (%TEMP%\osname.txt) DO set vers=%%i
+
+echo %vers% | find "Windows 7" > nul
+if %ERRORLEVEL% == 0 echo Your on Windows 7
+
+echo %vers% | find "Windows Server 2008" > nul
+if %ERRORLEVEL% == 0 echo Your on Windows server 2008
+
+echo %vers% | find "Windows Vista" > nul
+if %ERRORLEVEL% == 0 echo Your on Windows cista
+
+echo %vers% | find "Windows 10" > nul
+if %ERRORLEVEL% == 0 echo Your on Windows 10
+pause
+
+:START 
+title root@145.135.4.133 : 21209 skids connected
+cls
+color 2
+echo.
+echo.
+echo.
+echo                -----ÜÜÜÜÜÜÜÜÜÜÜÜÜÜ-----
+echo                -----Ý  Welcome!  Þ-----
+echo                -----ßßßßßßßßßßßßßß-----
+echo.
+echo              choices:
+echo               --(ssh) = (connect to a server (ssh telnet etc.))
+echo               --(P)ping
+echo               --(R)Record
+echo               --(B)Make IP lst
+echo.
+SET /p set=[root@OVH-GODS:~]# 
+if %set%==ssh goto STO
+if %set%==p goto PING
+if %set%==r goto REC
+if %set%==b GOTO TRASH
+if %set%==  GOTO START
+ 
+:TRASH
+SET /P e=First Octet: 
+SET /P t=Second Octet: 
+SET /P z=Enter Starting 3rd Octect: 
+echo.
+Echo %e%.%t%.(%z%).1-254
+echo.
+SET /P q=Enter Ending 3rd Octet:
+cls 
+
+:LOOP
+FOR /L %%a in (1,1,254) DO echo %e%.%t%.%z%.%%a >> IP_lst.txt
+set /A z=%z%+1
+IF /I %z% GTR %q% GOTO DONE
+Echo.
+echo ********************************
+echo ---------254 Lines Done---------
+echo ********************************
+GOTO LOOP
+
+:DONE
+set loadnum=0
+set load=
+title Done
+color 2
+cls 
+echo -------------------------------------------------
+echo                       Done
+echo -------------------------------------------------
+echo.
+echo               #
+echo             #
+echo     #     #          List Successfully Created
+echo      #  #            On Your Desktop :)
+echo       #
+echo.
+echo                      File Name = "IP_lst.txt"
+echo -------------------------------------------------
+pause
+GOTO START
+
+
+:PING
+cls 
+color 3
+echo.
+echo.
+SET /P ip=--Enter IP: 
+ping %ip% 
+pause
+GOTO START
+
+:STO
+IF EXIST "C:\Program Files\PuTTY\putty.exe" GOTO SSH
+cd %MYFILES%
+start %MYFILES%\putty.msi
+pause
+GOTO START
+
+:SSH
+cls
+color B4
+echo.
+echo " you can [--|  SSH, Telnet, Raw, Rlogin, Serial  |--]"
+echo. 
+SET /P type=--Would You like to do: 
+if type==SSH pause
+if type==telnet SET /P port=--Enter Port:
+if type==raw SET /P port=--Enter Port:
+if type==rlogin SET /P port=--Enter Port:
+if type==serial SET /P port=--Enter Port: 
+if type==telnet putty.exe -%type% root@%ip%
+if type==raw putty.exe -%type% root@%ip%
+if type==rlogin putty.exe -%type% root@%ip%
+if type==serial putty.exe -%type% root@%ip%
+SET /P ip=--Enter Server Adress: 
+SET /P password=--Enter Password: 
+putty.exe -%type% root@%ip% -pw %password% 
+echo -------%time% %date% root@%ip%:%port% Password:%password% time exited: %time%>> "C:\SSH_Logs\SSH_LOG.txt"
+pause
+GOTO Start
+
+:REC
+cls
+color 5
+echo     -----=Redord ips=-----
+SET /P entryy=IP: 
+SET /P entry=Port:  
+echo IP= %Entry%  ~  Port= %port% >> "C:\IPs.txt"
+SET /P ent=-            You Entered  Ip=%entry%   port=%entryy%
+pause
+GOTO START
+
+
